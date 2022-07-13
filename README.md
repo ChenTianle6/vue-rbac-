@@ -1,4 +1,4 @@
-# universal-template-system
+# vue-cms
 
 ## Project setup
 ```
