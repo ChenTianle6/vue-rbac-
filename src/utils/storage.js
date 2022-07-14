@@ -1,44 +1,26 @@
-/**
- * @author YangLing
- * @date 2022/7/11 09:34
- */
-/**
- * 本地存储数据
- * @param {*} key
- * @param {*} value
- */
+// 存储犯法
+const storage = window.sessionStorage
+
+// 存储数据
 export const setItem = (key, value) => {
   if (typeof value === 'object') {
     value = JSON.stringify(value)
   }
-  localStorage.setItem(key, value)
+  storage.setItem(key, value)
 }
-
-/**
- * 获取本地存储数据
- * @param {*} key
- * @returns
- */
+// 获取数据
 export const getItem = (key) => {
-  const data = localStorage.getItem(key)
+  const data = storage.getItem(key)
   try {
     return JSON.parse(data)
-  } catch (err) {
+  } catch {
     return data
   }
 }
-
-/**
- * 删除单个本地存储的数据
- * @param {*} key
- */
+// 删除数据
 export const removeItem = (key) => {
-  localStorage.removeItem(key)
+  storage.removeItem(key)
 }
-
-/**
- * 删除本地所有数据
- */
-export const removeAllItem = () => {
-  localStorage.clear()
+export const removeAll = () => {
+  storage.clear()
 }

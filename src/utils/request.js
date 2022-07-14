@@ -1,62 +1,86 @@
-/**
- * @author YangLing
- * @date 2022/7/11 09:14
- */
-
-// 导入axios
 import axios from 'axios'
-
-// 导入store
-import store from '@/store'
-
-// 导入message消息提示组件
 import { Message } from 'element-ui'
+import store from '@/store'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import router from '@/router'
 
-// 导入自定义消息提示
-import exceptionMessage from './exception-message'
-
-// 创建axios实例对象
-const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 5000
+const instance = axios.create({
+  baseURL: process.env.VUE_APP_API,
+  timeout: 3 * 1000
 })
 
 // 请求拦截器
-service.interceptors.request.use((config) => {
-  const token = store.getters.token
-  if (token) {
-    config.headers.token = token
+instance.interceptors.request.use(
+  (config) => {
+    // TODO 发送请求头
+    store.commit('loading/open')
+    NProgress.start()
+    const token = store.getters.token
+    if (token) {
+      config.headers.token = token
+    }
+    return config
+  },
+  (error) => {
+    store.commit('loading/close')
+    NProgress.done()
+    return Promise.reject(new Error(error))
   }
-
-  return config
-}, (error) => {
-  return Promise.reject(error)
-})
+)
 
 // 响应拦截器
-service.interceptors.response.use((response) => {
-  if (response.data.code === 200) {
-    return response.data.data
+instance.interceptors.response.use(
+  (response) => {
+    // TODO 全局响应处理
+    store.commit('loading/close')
+    NProgress.done()
+    const { data, code, msg } = response.data
+    if (code === 200) {
+      return data
+    }
+    _showErrorMsg(msg)
+    return Promise.reject(new Error(msg))
+  },
+  (error) => {
+    store.commit('loading/close')
+    NProgress.done()
+    const { message } = error
+    if (message.includes('timeout')) {
+      _showErrorMsg('网络超时啦')
+    }
+    if (message.includes('Network Error')) {
+      _showErrorMsg('请检查网络')
+    }
+    const { status } = error.response
+    if (status === 401) {
+      _showErrorMsg('重新登录一下叭')
+      store.dispatch('user/userLogout')
+      router.push('/login')
+    }
+    console.log(error.response)
+    // const { code, msg, status } = error.response.data
+    //
+    // switch (code) {
+    //   case 400:
+    //     _showErrorMsg(msg)
+    //     break
+    // }
+    // if (status === 404) {
+    //   _showErrorMsg('找不到资源啦')
+    // }
+    return Promise.reject(new Error(error))
   }
-  _showErrorMessage(response.data.code, response.data.msg)
-}, (error) => {
-  console.log('2')
-  return Promise.reject(error)
-})
+)
 
-// 错误消息提示
-const _showErrorMessage = (code, msg) => {
-  const message = exceptionMessage[code] || msg || '未知错误'
-  Message({ message, type: 'error' })
+const _showErrorMsg = (msg) => {
+  Message.error(msg)
 }
 
-// 统一了传参处理
+// 统一传参处理
 const request = (options) => {
-  if (options.method.toLowerCase() === 'get') {
-    options.params = options.data || {}
-  }
-  return service(options)
+  options.params = options.method.toLowerCase() === 'get' ? options.data : {}
+  return instance(options)
 }
 
-// 导出axios实例对象
 export default request

@@ -1,59 +1,38 @@
 <template>
-  <div class="aside-container">
-    <el-menu
-      :style="{width: $store.getters.isCollapse ? '60px' : '200px'}"
-      :default-active="activePath"
-      text-color="#fff"
-      background-color="#222d32"
-      active-text-color="#ffd04b"
-      :collapse="isCollapse"
-      :collapse-transition="false"
-      unique-opened
-      router
-    >
-      <MenuTree v-for="(item, index) in menus" :key="index" :item="item"></MenuTree>
+  <el-aside :width='sideWidth'>
+    <el-menu :collapse='$store.getters.Collapse' :collapse-transition='false' :default-active='$route.path'
+             active-text-color='#ffd04b'
+             background-color='#222d32' router
+             text-color='#fff'>
+      <menu-item v-for='(item,i) in menuList' :key='i' :item='item'></menu-item>
     </el-menu>
-  </div>
+  </el-aside>
 </template>
 
 <script>
-import MenuTree from '@/layout/AppAside/MenuTree'
-import { filterMenus } from '@/utils/menus'
+import MenuItem from './MenuItem'
+import { mapGetters } from 'vuex'
+import { rmeoveChildren, filterMenus } from '@/utils/rmeoveChildren'
 
 export default {
-  name: 'index',
-  data() {
-    return {
-
-    }
+  components: {
+    MenuItem
   },
   computed: {
-    activePath() {
-      return this.$route.path
+    ...mapGetters(['menus', 'Collapse']),
+    menuList () {
+      const data = rmeoveChildren(this.menus)
+      return filterMenus(data)
     },
-    menus() {
-      if (this.$store.getters.menus) {
-        return filterMenus(this.$store.getters.menus)
-      }
-    },
-    isCollapse() {
-      return this.$store.getters.isCollapse
+    sideWidth () {
+      return this.Collapse ? '64px' : '200px'
     }
-  },
-  components: {
-    MenuTree
-  },
-  created () {
-    console.log('create', this.menus)
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.aside-container{
-  width: auto;
-}
-.el-menu{
-  border-right : none;
+<style scoped>
+.el-menu {
+  border: none;
 }
 </style>

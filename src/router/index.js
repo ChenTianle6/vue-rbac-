@@ -1,98 +1,49 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import layout from '@/layout'
+import users from './modules/users'
+import roles from './modules/roles'
+import menus from './modules/menus'
 
 Vue.use(VueRouter)
-
-const routes = [
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch((err) => err)
+}
+// 公有
+export const publicRoutes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/login')
+    component: () => import('@/views/login')
   },
   {
     path: '/',
     name: 'layout',
-    component: () => import('../layout'),
-    redirect: '/index',
+    component: layout,
+    redirect: '/system',
     children: [
       {
-        path: '/index',
-        name: 'index',
-        component: () => import('../views/index'),
+        path: '/system',
+        name: 'system',
+        component: () => import('@/views/console'),
         meta: {
           title: '控制台',
           icon: 'el-icon-s-home'
         }
-      }
-    ]
-  },
-  {
-    path: '/sys',
-    name: 'sys',
-    component: () => import('../layout'),
-    meta: {
-      title: '系统管理',
-      icon: 'el-icon-s-grid'
-    },
-    redirect: '/sys/users',
-    children: [
+      },
       {
-        path: 'users',
-        name: 'users',
-        component: () => import('../views/user'),
-        meta: {
-          title: '用户管理',
-          icon: 'el-icon-user'
-        }
-      }
-    ]
-  },
-  {
-    path: '/sys',
-    name: 'sys',
-    meta: {
-      title: '系统管理',
-      icon: 'el-icon-s-grid'
-    },
-    component: () => import('../layout'),
-    redirect: '/sys/users',
-    children: [
-      {
-        path: 'roles',
-        name: 'roles',
-        component: () => import('../views/role'),
-        meta: {
-          title: '角色管理',
-          icon: 'el-icon-user-solid'
-        }
-      }
-    ]
-  },
-  {
-    path: '/sys',
-    name: 'sys',
-    meta: {
-      title: '系统管理',
-      icon: 'el-icon-s-grid'
-    },
-    component: () => import('../layout'),
-    redirect: '/sys/users',
-    children: [
-      {
-        path: 'menus',
-        name: 'menus',
-        component: () => import('../views/menu'),
-        meta: {
-          title: '菜单管理',
-          icon: 'el-icon-menu'
-        }
+        path: '/404',
+        name: '404',
+        component: () => import('@/views/other/404')
       }
     ]
   }
 ]
-
+// 私有
+export const privateRoutes = [users, roles, menus]
 const router = new VueRouter({
-  routes
+  routes: publicRoutes
 })
 
 export default router

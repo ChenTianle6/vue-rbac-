@@ -1,74 +1,123 @@
-/**
- * @author YangLing
- * @date 2022/7/11 10:03
- */
-
 import request from '@/utils/request'
 
 /**
- * 获取验证码接口
+ * 获取图片验证码
  * @returns {AxiosPromise}
  */
-const getCaptcha = () => {
+export const captcha = () => {
   return request({
     url: '/captcha',
     method: 'GET'
   })
 }
-
 /**
- * 登录接口
+ * 用户登录
  * @param data
  * @returns {AxiosPromise}
  */
-const login = (data) => {
+export const login = (data) => {
   return request({
-    url: '/login?username=' + data.username + '&password=' + data.password + '&code=' + data.code + '&token=' + data.token,
-    method: 'POST',
-    data
+    url: `/login?username=${data.username}&password=${data.password}&code=${data.code}&token=${data.token}`,
+    method: 'POST'
   })
 }
-
 /**
- * 获取用户信息接口
+ * 获取用户新形象
  * @returns {AxiosPromise}
  */
-const getUserInfo = () => {
+export const userInfo = () => {
   return request({
     url: '/user/info',
     method: 'GET'
   })
 }
-
 /**
- * 获取用户权限接口
+ * 获取用户权限
  * @returns {AxiosPromise}
+ * @constructor
  */
-const getPermissionList = () => {
+export const MenuNav = () => {
   return request({
     url: '/menu/nav',
     method: 'GET'
   })
 }
-
 /**
- * 退出登录接口
+ * 用户退出
  * @returns {AxiosPromise}
  */
-const logout = () => {
+export const logout = () => {
   return request({
     url: '/logout',
     method: 'POST'
   })
 }
-
 /**
- * 导出api接口
+ * 获取用户列表
+ * @param data
+ * @returns {AxiosPromise}
  */
-export default {
-  getCaptcha,
-  login,
-  getUserInfo,
-  getPermissionList,
-  logout
+export const userListApi = (data) => {
+  return request({
+    url: '/user/list',
+    data,
+    method: 'GET'
+  })
+}
+/**
+ * 添加用户
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export const addUserApi = (data) => {
+  data.avatar = data.avatar ? data.avatar : 'https://joeschmoe.io/api/v1/random'
+  return request({
+    url: '/user/add',
+    method: 'POST',
+    data
+  })
+}
+/**
+ * 编辑用户
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export const updateUserApi = (data) => {
+  return request({
+    url: '/user/update',
+    method: 'PUT',
+    data
+  })
+}
+/**
+ * 分配角色
+ * @param id
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export const roleApi = (id, data) => {
+  return request({
+    url: `/user/assign/${id}`,
+    method: 'POST',
+    data
+  })
+}
+
+export const userDelApi = (integer) => {
+  return request({
+    url: `/sys/user/del`,
+    method: 'POST',
+    data: integer
+  })
+}
+/**
+ * 单个用户小心些
+ * @param id
+ * @returns {AxiosPromise}
+ */
+export const userInfoIdAPI = (id) => {
+  return request({
+    url: `/user/userInfo/${id}`,
+    method: 'GET'
+  })
 }

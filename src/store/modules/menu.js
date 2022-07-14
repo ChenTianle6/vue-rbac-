@@ -1,16 +1,12 @@
 export default {
   namespaced: true,
-  state: {
-    collapse: false
-  },
+  state: () => ({
+    isCollapse: false
+  }),
   mutations: {
-    SET_COLLAPSE: (state) => {
-      state.collapse = !state.collapse
+    changeCollapse(state) {
+      state.isCollapse = !state.isCollapse
     }
   },
-  actions: {
-    setCollapse: ({ commit }) => {
-      commit('SET_COLLAPSE')
-    }
-  }
+  actions: {}
 }
