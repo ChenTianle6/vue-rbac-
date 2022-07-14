@@ -39,8 +39,8 @@ export default {
       codeImageUrl: '',
       // 登录参数
       loginForm: {
-        username: 'duck',
-        password: 'admin888',
+        username: '',
+        password: '',
         code: '',
         token: ''
       },
@@ -52,15 +52,24 @@ export default {
     this.handleGetCaptcha()
   },
   methods: {
+    /**
+     * 调用接口获取验证码
+     */
     async handleGetCaptcha() {
       const { captchaImg, token } = await UserApi.getCaptcha()
       this.codeImageUrl = captchaImg
       this.loginForm.token = token
     },
+    /**
+     * 验证码刷新
+     */
     handleCodeRefresh() {
       this.loginForm.code = ''
       this.handleGetCaptcha()
     },
+    /**
+     * 登录表单校验
+     */
     handleVerifyForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
@@ -68,6 +77,9 @@ export default {
         }
       })
     },
+    /**
+     * 登录提交
+     */
     async handleSubmitLogin() {
       try {
         const token = await this.login(this.loginForm)
@@ -81,6 +93,9 @@ export default {
         this.loadingStatus = false
       }
     },
+    /**
+     * vuex登录
+     */
     ...mapActions({
       login: 'user/login'
     })

@@ -1,12 +1,15 @@
 const getters = {
   token: state => state.user.token,
-  hasUserInfo: (state) => {
+  hasUserInfo: state => {
     return state.user.userInfo || ''
   },
-  hasPermission: (state) => {
-    return (state.user.Permission && state.user.menus) || ''
+  hasPermission: state => {
+    return (state.user.permission && state.user.menus) || ''
   },
-  menus: state => state.user.menus
+  userInfo: state => state.user.userInfo,
+  menus: state => state.user.menus,
+  isCollapse: state => state.menu.collapse,
+  tags: state => state.tags.tags
 }
 
 export default getters

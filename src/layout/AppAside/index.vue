@@ -1,46 +1,59 @@
 <template>
   <div class="aside-container">
     <el-menu
+      :style="{width: $store.getters.isCollapse ? '60px' : '200px'}"
       :default-active="activePath"
       text-color="#fff"
-      backgroud-color="#222d32"
+      background-color="#222d32"
       active-text-color="#ffd04b"
+      :collapse="isCollapse"
+      :collapse-transition="false"
+      unique-opened
       router
     >
-    <MenuTree v-for="(item, index) in menus" :key="index" :item="item"></MenuTree>
+      <MenuTree v-for="(item, index) in menus" :key="index" :item="item"></MenuTree>
     </el-menu>
   </div>
 </template>
 
 <script>
 import MenuTree from '@/layout/AppAside/MenuTree'
-import { filterMenus } from '@/utils/menus' 
+import { filterMenus } from '@/utils/menus'
+
 export default {
   name: 'index',
   data() {
     return {
-      
+
     }
   },
   computed: {
-    activePath(){
+    activePath() {
       return this.$route.path
     },
-    menus(){
-      return filterMenus(this.$store.getters.menus)
+    menus() {
+      if (this.$store.getters.menus) {
+        return filterMenus(this.$store.getters.menus)
+      }
+    },
+    isCollapse() {
+      return this.$store.getters.isCollapse
     }
   },
-  comments:{
+  components: {
     MenuTree
   },
-  created() {
-    console.log('create',this.menus)
+  created () {
+    console.log('create', this.menus)
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.aside-container{
+  width: auto;
+}
 .el-menu{
-  border-right: none;
+  border-right : none;
 }
 </style>

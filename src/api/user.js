@@ -1,3 +1,8 @@
+/**
+ * @author YangLing
+ * @date 2022/7/11 10:03
+ */
+
 import request from '@/utils/request'
 
 /**
@@ -24,8 +29,10 @@ const login = (data) => {
   })
 }
 
-// 获取用户信息接口
-// @return {AxiosPromise}
+/**
+ * 获取用户信息接口
+ * @returns {AxiosPromise}
+ */
 const getUserInfo = () => {
   return request({
     url: '/user/info',
@@ -33,8 +40,10 @@ const getUserInfo = () => {
   })
 }
 
-// 获取用户权限接口
-// @returns {AxiosPromise}
+/**
+ * 获取用户权限接口
+ * @returns {AxiosPromise}
+ */
 const getPermissionList = () => {
   return request({
     url: '/menu/nav',
@@ -43,8 +52,23 @@ const getPermissionList = () => {
 }
 
 /**
+ * 退出登录接口
+ * @returns {AxiosPromise}
+ */
+const logout = () => {
+  return request({
+    url: '/logout',
+    method: 'POST'
+  })
+}
+
+/**
  * 导出api接口
  */
 export default {
-  getCaptcha, login, getUserInfo, getPermissionList
+  getCaptcha,
+  login,
+  getUserInfo,
+  getPermissionList,
+  logout
 }
