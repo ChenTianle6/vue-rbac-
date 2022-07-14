@@ -1,14 +1,17 @@
 <template>
   <div class="tags-container">
     <el-tag
+      @click="handleActiveTag(tag.path)"
+      @close="handleRemoveTag(index)"
       class="hand"
-      v-for="(tag) in tags"
+      v-for="(tag, index) in tags"
       :key="tag.path"
       size="medium"
       :closable="tag.path !== '/index'"
       :effect="$route.path === tag.path ? 'dark' : 'plain'"
-      type="warning">
-      {{tag.title}}
+      type="warning"
+    >
+      {{ tag.title }}
     </el-tag>
   </div>
 </template>
@@ -20,12 +23,45 @@ export default {
     tags() {
       return this.$store.getters.tags
     }
+  },
+  watch: {
+    $route: {
+      handler(newVal, oldVal) {
+        this.handeAddTag()
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  methods: {
+    handeAddTag() {
+      const path = this.$route.path
+      const title = this.$route.meta.title
+      const newTag = {
+        path,
+        title
+      }
+      this.$store.dispatch('tag/addTag', newTag)
+    }
+  },
+  handleRemoveTag(index) {
+    if (!index) return
+    this.$route.dispatch('tags/removeTag', index)
+    const path = this.rags[index - 1].path
+    this.$router.push(path)
+  },
+  handleActiveTag(path) {
+    this.$router.push(path)
   }
 }
 </script>
 
-<style scoped>
-.tags-container{
-  margin-left : 10px;
+<style lang="scss" scoped>
+.tags-container {
+  margin-left: 10px;
+
+  .el-tag {
+    margin-right: 10px;
+  }
 }
 </style>
